@@ -9,6 +9,7 @@ npm install
 ```
 
 > **Before this next step, make sure that you have a `.env` file in the project root.**
+> 
 Then, generate the Prisma Client:
 ```bash
 npx prisma generate
