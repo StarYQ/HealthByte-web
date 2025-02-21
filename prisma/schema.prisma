@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Clinician (User) model
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  lastFullAuth  DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relationship to patients
+  patients      Patient[]
+}
+
+// Patient model
+model Patient {
+  id         Int      @id @default(autoincrement())
+  stepCount  Int      // Single health data field for now
+  
+  // Foreign key to Clinician
+  clinicianId String   @db.Uuid
+  clinician   User @relation(fields: [clinicianId], references: [id], onDelete: Restrict)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
