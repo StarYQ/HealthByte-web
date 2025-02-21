@@ -18,7 +18,7 @@ export default async function MyPatients() {
       <Navbar user={user} />
       <h1>My Patients</h1>
       <p><i>Patient list placeholder</i></p>
-      {/* TODO: (FOR NEW MEMBERS) Create API route to access patient list and use it for the My Patients page*/}
+      {/* TODO: Create API route to access patient list and use it for the My Patients page*/}
     </div>
   );
 }
