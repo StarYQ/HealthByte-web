@@ -23,7 +23,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## NOTE:
-If the site crashes upon visiting a page after ```git pull```, try
+If the site crashes upon visiting a page after pulling an updated version, try
 ```bash
 rm -rf node_modules && rm -rf .next && npm install
 ```
