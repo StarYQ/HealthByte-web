@@ -29,6 +29,7 @@ model Patient {
   stepCount   BigInt    @db.BigInt
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @default(now()) @updatedAt
+  name        String?
 
   // Many-to-many relationship with clinicians
   clinicians  User[]    @relation("CliniciansOnPatients")

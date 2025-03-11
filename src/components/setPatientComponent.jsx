@@ -5,7 +5,8 @@ import { useState } from 'react';
 export const Card = ({ patient, onAdd, onRemove }) => {
     return (
         <div className={styles.card} >
-            <h2>Patient Id: {patient.authId}</h2>
+            <h2>Patient Name: {patient.name || "No name provided"}</h2>
+            <h2>Patient ID: {patient.authId}</h2>
             <h2>Step Count: {patient.stepCount}</h2>
             {onAdd && <button onClick={() => onAdd(patient.authId, 'add')}>Add Patient</button>}
             {onRemove && <button onClick={() => onRemove(patient.authId, 'remove')}>Remove Patient</button>}
@@ -75,3 +76,4 @@ const SetPatientComponent = ({user, currPatients,  nonPatients}) => {
 }
  
 export default SetPatientComponent;
+        

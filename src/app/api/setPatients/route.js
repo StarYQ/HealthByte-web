@@ -37,7 +37,6 @@ export async function GET(){
         const currPatients = clinicianWithPatients.patients.map(patient => ({
             ...patient,
             stepCount: patient.stepCount.toString()
-            
         }))
         
         const nonPatients = cliniciansNotWithPatients.map((patient) => ({
@@ -94,7 +93,6 @@ export async function POST(req){
                         disconnect:{
                             authId: patientId
                         }
-
                     }
                 }
             })
