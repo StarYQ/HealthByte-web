@@ -25,8 +25,13 @@ model User {
 
 // Patient model
 model Patient {
-  authId   String  @id // stores the Supabase auth user id
-  stepCount   BigInt    @db.BigInt
+  // Supabase auth user id 
+  authId   String  @id 
+  // Health data we track
+  stepCount            BigInt   @db.BigInt           // stepCount
+  walkingDistanceMeters Float?  @db.DoublePrecision  // distanceWalkingRunning
+  sixMinuteWalkMeters   Float?  @db.DoublePrecision  // sixMinuteWalkTestDistance
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @default(now()) @updatedAt
   name        String?
