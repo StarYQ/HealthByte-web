@@ -1,3 +1,6 @@
+// ────────────────────────────────────────────────────────────────────────────────
+//  Prisma Client + PostgreSQL (Supabase)
+// ────────────────────────────────────────────────────────────────────────────────
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,8 +11,28 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Clinician (User) model
+// ────────────────────────────────────────────────────────────────────────────────
+//  ENUMS
+// ────────────────────────────────────────────────────────────────────────────────
+
+/// For survey & item lifecycle
+enum TaskStatus {
+  NOT_STARTED
+  COMPLETED
+}
+
+/// How the patient answered each question
+enum ResponseType {
+  SLIDER
+  TEXT_INPUT
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+//  CORE USER MODELS
+// ────────────────────────────────────────────────────────────────────────────────
+
 model User {
+  /// Supabase auth UID for clinicians
   id            String    @id @default(uuid()) @db.Uuid
   name          String?
   email         String?   @unique
@@ -18,24 +41,84 @@ model User {
   lastFullAuth  DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now()) @updatedAt
-  
-  // Many-to-many relationship with patients
-  patients      Patient[] @relation("CliniciansOnPatients")
+
+  /// All patients under this clinician
+  patients Patient[] @relation("ClinicianPatients")
+
+  /// Surveys this clinician has assigned
+  surveyAssignments SurveyAssignment[]
 }
 
-// Patient model
 model Patient {
-  // Supabase auth user id 
-  authId   String  @id 
-  // Health data we track
-  stepCount            BigInt   @db.BigInt           // stepCount
-  walkingDistanceMeters Float?  @db.DoublePrecision  // distanceWalkingRunning
-  sixMinuteWalkMeters   Float?  @db.DoublePrecision  // sixMinuteWalkTestDistance
+  /// Supabase auth UID for patients
+  authId String @id
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now()) @updatedAt
-  name        String?
+  // Foreign key back to their one clinician (nullable)
+  clinicianId String? @db.Uuid
+  clinician   User?   @relation("ClinicianPatients", fields: [clinicianId], references: [id])
 
-  // Many-to-many relationship with clinicians
-  clinicians  User[]    @relation("CliniciansOnPatients")
+  // HealthKit / ResearchKit snapshots
+  stepCount             BigInt @db.BigInt
+  walkingDistanceMeters Float? @db.DoublePrecision
+  sixMinuteWalkMeters   Float? @db.DoublePrecision
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  name      String?
+
+  /// Surveys assigned to this patient
+  surveyAssignments SurveyAssignment[]
+
+  @@index([clinicianId])
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+//  SURVEY ASSIGNMENT + ITEMS
+// ────────────────────────────────────────────────────────────────────────────────
+
+/// A full survey assigned to a patient (no templates)
+model SurveyAssignment {
+  /// PK
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Who, when, and status
+  patient   Patient @relation(fields: [patientId], references: [authId])
+  patientId String
+
+  clinician   User?   @relation(fields: [clinicianId], references: [id])
+  clinicianId String? @db.Uuid
+
+  dueAt     DateTime?
+  status    TaskStatus @default(NOT_STARTED)
+  createdAt DateTime   @default(now())
+
+  /// All question‑answer pairs for this survey
+  items SurveyItem[]
+
+  @@index([patientId])
+  @@index([clinicianId])
+}
+
+/// One question + one answer in a survey assignment
+model SurveyItem {
+  /// PK
+  id String @id @default(uuid()) @db.Uuid
+
+  /// FK → the survey this belongs to
+  assignment   SurveyAssignment @relation(fields: [assignmentId], references: [id])
+  assignmentId String
+
+  /// The question text
+  question String
+
+  /// The patient’s answer (even numbers as strings; app converts as needed)
+  answer String
+
+  /// How to render & interpret `answer`
+  responseType ResponseType
+
+  /// Tracks whether the patient has completed this item
+  status TaskStatus @default(NOT_STARTED)
+
+  @@index([assignmentId])
 }
