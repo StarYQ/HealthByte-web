@@ -1,7 +1,6 @@
 import Navbar from "@/components/Navbar"
 import SetPatientComponent from "@/components/setPatientComponent"
 import { getUser } from "@/lib/auth"
-import { headers } from "next/headers"
 
 export default async function setPatients(){
     
