@@ -114,7 +114,7 @@ model SurveyItem {
   /// The patient’s answer (even numbers as strings; app converts as needed)
   answer String
 
-  /// How to render & interpret `answer`
+  /// Format in which the patient's answer will be formatted
   responseType ResponseType
 
   /// Tracks whether the patient has completed this item
