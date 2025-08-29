@@ -1,0 +1,14 @@
+.card{
+    min-height: 4rem;
+    outline: solid 1px black;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+
+}
+
+.container{
+    display: flex;
+    padding: 1rem;
+    justify-content: space-around;
+}
